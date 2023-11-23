@@ -1,0 +1,111 @@
+<nav class="h-40 w-full">
+  <div
+    class="md:max-w-3xl xl:max-w-6xl px-4 flex items-center h-full mx-auto md:px-0"
+  >
+    <div class="flex items-center gap-4">
+      <lucide-icon name="cloud-sun" class="text-white w-14 h-14"></lucide-icon>
+      <h1 class="font-bold text-secondary-500 text-2xl">
+        WEATHER<span class="text-white font-light">FORECAST</span>
+      </h1>
+    </div>
+  </div>
+</nav>
+<div
+  class="min-h-[calc(100vh-10rem)] w-full md:max-w-lg xl:max-w-6xl md:mx-auto flex flex-col items-center text-white gap-10 py-10"
+>
+  <div class="self-start px-4 md:px-0">
+    <p class="md:text-xl">La tua ricerca per</p>
+    <div class="flex gap-8 text-2xl md:text-4xl font-light">
+      <p><span class="font-semibold">LAT:</span> {{ latitudine }}</p>
+      <p><span class="font-semibold">LON: </span>{{ longitudine }}</p>
+    </div>
+  </div>
+  <div
+    class="flex flex-col xl:flex-row gap-10 md:w-full justify-between items-start"
+  >
+    <div class="w-full">
+      <div class="relative overflow-x-auto shadow-md rounded-lg md:max-w-lg">
+        <table *ngIf="weatherData" class="w-full text-sm text-left">
+          <thead class="text-xs bg-primary-400/20 uppercase">
+            <tr class="text-white">
+              <th scope="col" class="px-6 py-3">Timepoint</th>
+              <th scope="col" class="px-6 py-3">Previsione</th>
+              <th scope="col" class="px-6 py-3">Temp</th>
+            </tr>
+          </thead>
+          <tbody class="bg-white text-slate-800">
+            <tr *ngFor="let item of paginatedItems">
+              <td class="px-6 py-4">{{ item.timepoint }}</td>
+              <td class="px-6 py-4">
+                <img
+                  src="assets/{{ item.weather }}.png"
+                  alt="{{ item.weather }}"
+                  class="w-8 h-8"
+                />
+              </td>
+              <td class="px-6 py-4 flex items-center">
+                {{ item.temp2m }}° C
+                <lucide-icon name="thermometer"></lucide-icon>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <app-skeleton-table *ngIf="!weatherData"></app-skeleton-table>
+      </div>
+      <div class="space-x-4 mt-2">
+        <button (click)="previousPage()" [disabled]="currentPage === 0">
+          <lucide-icon
+            [ngClass]="{ 'text-primary-300/30': currentPage === 0 }"
+            name="chevron-left-square"
+            class="w-8 h-8 transition-all duration-200"
+          ></lucide-icon>
+        </button>
+        <button
+          *ngIf="weatherData"
+          (click)="nextPage()"
+          [disabled]="
+            currentPage >= weatherData.dataseries.length / itemsPerPage - 1
+          "
+        >
+          <lucide-icon
+            [ngClass]="{
+              'text-primary-300/30':
+                currentPage >= weatherData.dataseries.length / itemsPerPage - 1
+            }"
+            name="chevron-right-square"
+            class="w-8 h-8"
+          ></lucide-icon>
+        </button>
+      </div>
+    </div>
+    <div
+      *ngIf="sunData && sunData.results"
+      class="flex flex-col gap-10 self-center"
+    >
+      <div class="flex gap-10 items-center justify-between">
+        <div class="space-y-2">
+          <p class="text-2xl text-secondary-500">Alba</p>
+          <p class="text-4xl font-extralight">{{ sunData.results.sunrise }}</p>
+        </div>
+        <lucide-icon
+          name="sunrise"
+          class="w-16 h-16 text-secondary-600"
+        ></lucide-icon>
+      </div>
+      <div class="flex gap-10 items-center justify-between">
+        <div class="space-y-2">
+          <p class="text-2xl text-primary-400">Tramonto</p>
+          <p class="text-4xl font-extralight">{{ sunData.results.sunset }}</p>
+        </div>
+        <lucide-icon
+          name="sunset"
+          class="w-16 h-16 text-primary-300"
+        ></lucide-icon>
+      </div>
+    </div>
+    <app-skeleton-sundata
+      class="flex flex-col gap-10 self-center"
+      *ngIf="!sunData"
+    ></app-skeleton-sundata>
+  </div>
+</div>
